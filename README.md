@@ -95,13 +95,14 @@ Another advantage of the ML Workspace is the visualization of the most important
 
 ## Pipeline comparison
 Both pipelines used the same original dataset which was splitted in the same ratio. With an accuracy of 91.75 % the AutoML model was slightly better than the HyperDrive tuned one with an accuracy of 90.91 %.
-Even though the accuracies were approx. the same, the architecture of both approaches differ from each other. Whereas a custom-coded model is required and only the hyperparameters are tuned via HyperDrive in a specified range, you do not need this effort when using AutoML. For the second mentioned you only need to set up the config of the engine and AutoML provides you a comprehensive model interpretation as shown in the last [subchapter](AutoML/Results).
-**Compare the two models and their performance. What are the differences in accuracy? In architecture? If there was a difference, why do you think there was one?**
+Even though the accuracies were approx. the same, the architecture of both approaches differ from each other. Whereas a custom-coded model is required and only the hyperparameters are tuned via HyperDrive in a specified range, you do not need this effort when using AutoML. For the second mentioned you only need to set up the config of the engine and AutoML provides you a comprehensive model interpretation as shown in the last [subchapter](#results-1).
 
 ## Future work
-**What are some areas of improvement for future experiments? Why might these improvements help the model?**
-1. Splitting in same sets
-2. GPUs instead of CPU cluster
+AutoML as well as HyperDrive provide good results in general. Some points might be mentioned here:
+1. The datasets were splitted in the **same ratio but not with the same data in training and test set** for HyperDrive and AutoML approach. These were randomly chosen.
+2. The experiments were time-consuming and were stopped after a certain amount of time. It can be considered to use **GPUs instead of CPU clusters** to speed up in the future.
+3. For HyperDrive there are **several opportunities for setting up a parameter sampler and a stopping policy**. Different approaches could be compared in order to gain better results.
+4. In the [AutoML interpretation](#results-1) you can recognize that the **False Negatives** ratio is almost 50 % which is quite high.
 
 ## Proof of cluster clean up
 To not waste unused resources the compute cluster is deleted in the last step of the Jupyter Notebook.
