@@ -21,11 +21,13 @@ The highest accuracy was achieved by an automatic generated model with the `Voti
 ## Scikit-learn Pipeline
 
 The architecture contains of two elements: 
+![png](images/HyperDrive/Architecture_hyperdrive.png)
+
 - The Pyhton scripts (`train.py`) includes the `Scikit-learn` model, functions to  read the dataset from the URL and saving it as `TabularDatasetFactory` object, cleaning the dataset, splitting it into training and test data und receiving the final metric score.
-- The Jupyter notebook is hosted on a compute instance and automates the steps in order to tune the hyperparameters of the `LogisticRegression` model. To do so, it creates the compute clusters, specifies the configuration of the hyperparameter tuning engine and runs the experiment.
+- The Jupyter Notebook is hosted on a compute instance and automates the steps in order to tune the hyperparameters of the `LogisticRegression` model. To do so, it creates the compute clusters, specifies the configuration of the hyperparameter tuning engine and runs the experiment.
 
 ### Parameter Sampler
-In the notebook, a parameter sampler of the Class [RandomParameterSampling](https://learn.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive.randomparametersampling?view=azure-ml-py) was chosen which supports discrete and continuous hyperparameters. It was specified as follows:
+In the Notebook, a parameter sampler of the Class [RandomParameterSampling](https://learn.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive.randomparametersampling?view=azure-ml-py) was chosen which supports discrete and continuous hyperparameters. It was specified as follows:
 ```
 ps = RandomParameterSampling( {
     "--C" : uniform(0.1,1),
@@ -57,13 +59,14 @@ The experiment overview including the Parameter Sampler and the Stopping Policy 
 Via HyperDrive the hyperparameter were tuned und the resulting accuracies were compared until the stopping policy terminates the procedure. Some runs are shown below:
 ![png](images/HyperDrive/Algorithm_samples_diff_params.png)
 
-The best performing model was parametrized with a **Regularization Strength** (`C`) of 0.9711269 and **Max. Iterations** (`max_iter`) of 100. It has an accuracy of 90.91 % as you can see in the following:
+The best performing model was parametrized with a **Regularization Strength** (`--C`) of 0.9711269 and **Max. Iterations** (`--max_iter`) of 100. It has an accuracy of 90.91 % as you can see in the following:
 ![png](images/HyperDrive/Best_algorithm_params.png)
 
 ## AutoML
 AutoML is a new feature of the Azure Cloud to automate the time consuming, iterative tasks of machine learning model development. In contrast to Hyperparameter tuning with HyperDrive, you don't need a model which is specified by the ML engineer before the training. Rather AutoML finds a model by using different algorithms and parameters trying to improve the specified metrics.
 
 The orchestration is done in the same Notebook, but you do not need a training script here. 
+![png](images/AutoML/Architecture_automl.png)
 In the first step I received the data from the same URL  above. The splitting of the dataset into training and test data in the same ratio as with HyperDrive was done with the `random_split` method of `TabularDatasetFactory` class. 
 The AutoML engine only works with a cleaned training dataset. For this reason, I used the `clean_data` method from the `train.py` script.
 
