@@ -50,10 +50,21 @@ policy = BanditPolicy(
 ```
 The policy automatically terminates poorly performing runs and improves computational efficiency so I prevented my training procedure to deal with not promising hyperparameters.
 
+### Results
+The experiment overview including the Parameter Sampler and the Stopping Policy from above is as follows:
+![png](images/HyperDrive/Final_experiment_overview.png)
+
+Via HyperDrive the hyperparameter were tuned und the resulting accuracies were compared until the stopping policy terminates the procedure. Some runs are shown below:
+![png](images/HyperDrive/Algorithm_samples_diff_params.png)
+
+The best performing model was parametrized with a **Regularization Strength** (`C`) of 0.9711269 and **Max. Iterations** (`max_iter`) of 100. It has an accuracy of 90.91 % as you can see in the following:
+![png](images/HyperDrive/Best_algorithm_params.png)
+
 ## AutoML
 AutoML is a new feature of the Azure Cloud to automate the time consuming, iterative tasks of machine learning model development. In contrast to Hyperparameter tuning with HyperDrive, you don't need a model which is specified by the ML engineer before the training. Rather AutoML finds a model by using different algorithms and parameters trying to improve the specified metrics.
 
-The orchestration is done in the same Notebook, but you do not need a training script here. That is why I received the data from the URL above. For splitting the dataset into training and test data with the same ration as above, I used the `random_split` method of `TabularDatasetFactory` class. 
+The orchestration is done in the same Notebook, but you do not need a training script here. 
+In the first step I received the data from the same URL  above. The splitting of the dataset into training and test data in the same ratio as with HyperDrive was done with the `random_split` method of `TabularDatasetFactory` class. 
 The AutoML engine only works with a cleaned training dataset. For this reason, I used the `clean_data` method from the `train.py` script.
 
 The implemented AutoML Config looks as follows:
@@ -67,14 +78,35 @@ automl_config = AutoMLConfig(
     n_cross_validations=3
 )
 ```
-With the `experiment_timeout_minutes` parameter the procedure of finding an optimal model is limited. Here, 25 minutes were enough to beat the model tuned by HyperDrive.
+With the `experiment_timeout_minutes` parameter the procedure of finding an optimal model  limited. Here, 25 minutes were enough to beat the model tuned by HyperDrive. The `label_column_name` parameter was set `y` which is the column header of the labels in the dataset.
+
+### Results
+The final experiment overview is as follows:
+![png](images/AutoML/Final_experiment_overview.png)
+
+AutoML tried out several models with different algorithm to maximize the given metric:
+![png](images/AutoML/Algorithm_samples_diff_accuracy.png)
+
+The best performing model is based on the `VotingEnsemble` algorithm and has an accuracy of 91.75 %. The Azure ML Workspace provides diagrams for many metrices. Some interesting ones are shown below:
+![png](images/AutoML/Best_algorithm_diff_metrics_graphically.png)
+
+Another advantage of the ML Workspace is the visualization of the most important features in the classification process:
+![png](images/AutoML/Explanation_bar_diagram.png)
 
 ## Pipeline comparison
+Both pipelines used the same original dataset which was splitted in the same ratio. With an accuracy of 91.75 % the AutoML model was slightly better than the HyperDrive tuned one with an accuracy of 90.91 %.
+Even though the accuracies were approx. the same, the architecture of both approaches differ from each other. Whereas a custom-coded model is required and only the hyperparameters are tuned via HyperDrive in a specified range, you do not need this effort when using AutoML. For the second mentioned you only need to set up the config of the engine and AutoML provides you a comprehensive model interpretation as shown in the last [subchapter](AutoML/Results).
 **Compare the two models and their performance. What are the differences in accuracy? In architecture? If there was a difference, why do you think there was one?**
 
 ## Future work
 **What are some areas of improvement for future experiments? Why might these improvements help the model?**
+1. Splitting in same sets
+2. GPUs instead of CPU cluster
 
 ## Proof of cluster clean up
-**If you did not delete your compute cluster in the code, please complete this section. Otherwise, delete this section.**
-**Image of cluster marked for deletion**
+To not waste unused resources the compute cluster is deleted in the last step of the Jupyter Notebook.
+```
+compute_cluster.delete()
+```
+The ongoing deleting process could be followed along in the ML Workspace:
+![png](images/Deleting_instance_ongoing.png)
