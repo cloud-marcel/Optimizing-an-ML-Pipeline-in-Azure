@@ -20,7 +20,7 @@ The highest accuracy was achieved by an automatic generated model with the `Voti
 
 ## Scikit-learn Pipeline
 
-The architecture contains of two elements: 
+The architecture contains of two elements (image from Udacity Classroom): 
 ![png](images/HyperDrive/Architecture_hyperdrive.png)
 
 - The Pyhton scripts (`train.py`) includes the `Scikit-learn` model, functions to  read the dataset from the URL and saving it as `TabularDatasetFactory` object, cleaning the dataset, splitting it into training and test data und receiving the final metric score.
@@ -38,6 +38,7 @@ ps = RandomParameterSampling( {
 The [documentation](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) says about the parameters:
 - `C` (float): Inverse of regularization strength; must be a positive float. That means, we need a continuous variable here, sampled via the `uniform` method.
 - `max_iter` (int): Maximum number of iterations taken for the solvers to converge. For this, I used a discrete variable with the `choice` function.
+
 With limiting the range of possible parameters, I was able to shrink the training resources and time.
 
 ### Early Stopping Policy
@@ -63,14 +64,14 @@ The best performing model was parametrized with a **Regularization Strength** (`
 ![png](images/HyperDrive/Best_algorithm_params.png)
 
 ## AutoML
-AutoML is a new feature of the Azure Cloud to automate the time consuming, iterative tasks of machine learning model development. In contrast to Hyperparameter tuning with HyperDrive, you don't need a model which is specified by the ML engineer before the training. Rather AutoML finds a model by using different algorithms and parameters trying to improve the specified metrics.
+AutoML is a new feature of the Azure ML Workspace to automate the time consuming, iterative tasks of machine learning model development. In contrast to Hyperparameter tuning with HyperDrive, you don't need a model which is specified by the ML engineer before the training. Rather AutoML finds a model by using different algorithms and parameters trying to improve the specified metrics.
 
 The orchestration is done in the same Notebook, but you do not need a training script here. 
 ![png](images/AutoML/Architecture_automl.png)
-In the first step I received the data from the same URL  above. The splitting of the dataset into training and test data in the same ratio as with HyperDrive was done with the `random_split` method of `TabularDatasetFactory` class. 
+In the first step I received the data from the same URL . The splitting of the dataset into training and test data in the same ratio as with HyperDrive was done with the `random_split` method of `TabularDatasetFactory` class. 
 The AutoML engine only works with a cleaned training dataset. For this reason, I used the `clean_data` method from the `train.py` script.
 
-The implemented AutoML Config looks as follows:
+The implemented AutoML configuration looks as follows:
 ```
 automl_config = AutoMLConfig(
     experiment_timeout_minutes=25,
@@ -81,7 +82,7 @@ automl_config = AutoMLConfig(
     n_cross_validations=3
 )
 ```
-With the `experiment_timeout_minutes` parameter the procedure of finding an optimal model  limited. Here, 25 minutes were enough to beat the model tuned by HyperDrive. The `label_column_name` parameter was set `y` which is the column header of the labels in the dataset.
+With the `experiment_timeout_minutes` parameter the procedure of finding an optimal model was limited. Here, 25 minutes were enough to beat the model tuned by HyperDrive. The `label_column_name` parameter was set `y` which is the column header of the labels in the dataset.
 
 ### Results
 The final experiment overview is as follows:
@@ -105,7 +106,7 @@ AutoML as well as HyperDrive provide good results in general. Some points might 
 1. The datasets were splitted in the **same ratio but not with the same data in training and test set** for HyperDrive and AutoML approach. These were randomly chosen.
 2. The experiments were time-consuming and were stopped after a certain amount of time. It can be considered to use **GPUs instead of CPU clusters** to speed up in the future.
 3. For HyperDrive there are **several opportunities for setting up a parameter sampler and a stopping policy**. Different approaches could be compared in order to gain better results.
-4. In the [AutoML interpretation](#results-1) you can recognize that the **False Negatives** ratio is almost 50 % which is quite high.
+4. In the [AutoML interpretation](#results-1) you can recognize that the **False Negatives** ratio is almost 50 % which is quite high. There might be room for improvement.
 
 ## Proof of cluster clean up
 To not waste unused resources the compute cluster is deleted in the last step of the Jupyter Notebook.
